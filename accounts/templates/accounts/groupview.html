@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+{% if group.admin == user.username %}
+You are the admin of the group
+<br>
+Share this link for your members to join
+<br>
+http://{{ current_site.domain }}{% url 'accounts:join' slug=group.slug %}
+<table>
+  {% for user in group.members.all %}
+  <tr>
+    <td>{{ user.username }}</td>
+    <td>{{ user.email }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% elif user in group.members.all %}
+<a href="{% url 'accounts:leave' slug=group.slug %}"><button type="button" name="button">Leave Group</button></a>
+{% endif %}
+{% endblock %}
