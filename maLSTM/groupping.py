@@ -5,11 +5,6 @@ from gensim.models import KeyedVectors
 import re
 from nltk.corpus import stopwords
 from sklearn.model_selection import train_test_split
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-import itertools
-import datetime
 
 from keras.preprocessing.sequence import pad_sequences
 from keras.models import Model
@@ -19,8 +14,12 @@ from keras.optimizers import Adadelta
 from keras.callbacks import ModelCheckpoint
 
 
+
+stops = set(stopwords.words('english'))
+inverse_vocabulary = ['<unk>']
+
 import nltk
-  
+nltk.download('stopwords')
 
 def text_to_word_list(text):
     ''' Pre process and convert texts to a list of words '''
@@ -71,22 +70,23 @@ import json
 
 res = []
 def inference(questions):
-  for question in questions:
-    q2n = []  # q2n -> question numbers representation
-    for word in text_to_word_list(question):
-      # Check for unwanted word
-      #if word in stops and word not in word2vec.vocab:
-       # continue                
-
-      if word not in vocabulary:
-        vocabulary[word] = len(inverse_vocabulary)
-        q2n.append(len(inverse_vocabulary))
-        inverse_vocabulary.append(word)
-      else:
-        q2n.append(vocabulary[word])
-    print(q2n)
-    res.append(q2n)
-  return res
+    stops = set(stopwords.words('english'))
+    inverse_vocabulary = ['<unk>']
+    for question in questions:
+        q2n = []  # q2n -> question numbers representation
+        for word in text_to_word_list(question):
+        # Check for unwanted word
+        #if word in stops and word not in word2vec.vocab:
+        # continue
+            if word not in vocabulary:
+                vocabulary[word] = len(inverse_vocabulary)
+                q2n.append(len(inverse_vocabulary))
+                inverse_vocabulary.append(word)
+            else:
+                q2n.append(vocabulary[word])
+        print(q2n)
+        res.append(q2n)
+    return res
 
 
 def pad(arr):
@@ -104,18 +104,17 @@ def pad_questions(user_question):
         result.append(temp)
     return result
 
-
-
-
 def exponent_neg_manhattan_distance(left, right):
     ''' Helper function for the similarity estimate of the LSTMs outputs'''
     return K.exp(-K.sum(K.abs(left-right), axis=1, keepdims=True))
 
-def create_model():
+def create_model(embeddings,):
   n_hidden = 50
   gradient_clipping_norm = 1.25
   batch_size = 64
   n_epoch = 25
+  max_seq_length = 213
+  embedding_dim = 300
     
   # The visible layer
   left_input = Input(shape=(max_seq_length,), dtype='int32')
@@ -155,18 +154,12 @@ def load_structure():
 
   return vocabulary, embeddings, model
 
-def checkSemantics(question1, question2, vocabulary, embeddings, model):
-    nltk.download('stopwords')
-    
+def checkSemantics(question1, question2, model):
     questions = []
     questions.append(question1)
     questions.append(question2)
     res =[]
-    stops = set(stopwords.words('english'))
-    inverse_vocabulary = ['<unk>']
     inference(questions)
-    max_seq_length = 213
-    embedding_dim = 300
     result = pad_questions(res)
     vals = model.predict([result[0],result[1]])
     op_len = max(len(questions[0]), len(questions[1]))
