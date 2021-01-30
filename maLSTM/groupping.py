@@ -147,12 +147,17 @@ def load_pretrained():
   return model
 
 
+def load_structure():
+  with open('/content/gdrive/My Drive/Siamese LSTM/vocab.json') as f:
+      vocabulary = json.load(f)
+  embeddings = np.load('/content/gdrive/My Drive/Siamese LSTM/data.npy')
+  model = load_pretrained()
 
-def checkSemantics(question1, question2):
+  return vocabulary, embeddings, model
+
+def checkSemantics(question1, question2, vocabulary, embeddings, model):
     nltk.download('stopwords')
-    with open('/content/gdrive/My Drive/Siamese LSTM/vocab.json') as f:
-        vocabulary = json.load(f)
-    embeddings = np.load('/content/gdrive/My Drive/Siamese LSTM/data.npy')
+    
     questions = []
     questions.append(question1)
     questions.append(question2)
@@ -163,7 +168,6 @@ def checkSemantics(question1, question2):
     max_seq_length = 213
     embedding_dim = 300
     result = pad_questions(res)
-    model = load_pretrained()
     vals = model.predict([result[0],result[1]])
     op_len = max(len(questions[0]), len(questions[1]))
     final_score = np.sum(vals[-op_len:]) / op_len
