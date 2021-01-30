@@ -1,30 +1,65 @@
 {% extends "base.html" %}
 {% block content %}
 {% if user.is_authenticated %}
-<a href="{% url 'accounts:logout' %}"><button type="button" name="button">Logout</button></a>
-<a href="{% url 'accounts:creategroup' %}"><button type="button" name="button">Create New Group</button></a>
+<ul class="nav justify-content-end bg-light">
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'accounts:creategroup' %}">+ Create Group</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'accounts:logout' %}">Logout</a>
+  </li>
+</ul>
 {% if admin_groups %}
-<h3>Groups (Admin)</h3>
+<h3 class="text-warning bg-white p-2 text-wrap w-25 m-3">Groups (Admin)</h3>
 <ul>
   {% for i in admin_groups %}
-  <a href="{% url 'accounts:group' slug=i.slug %}">
+  <a class="text-white" href="{% url 'accounts:group' slug=i.slug %}">
     <li>{{i.name}}</li>
   </a>
   {% endfor %}
 </ul>
 {% endif %}
 {% if member_groups %}
-<h3>Groups (Member)</h3>
+<h3 class="text-warning bg-white p-2 text-wrap w-25 m-3">Groups (Member)</h3>
 <ul>
   {% for i in member_groups %}
-  <a href="{% url 'accounts:group' slug=i.group.slug %}">
+  <a class="text-white" href="{% url 'accounts:group' slug=i.group.slug %}">
     <li>{{i.group.name}}</li>
   </a>
   {% endfor %}
 </ul>
 {% endif %}
 {% else %}
-<a href="{% url 'accounts:login' %}"><button type="button" name="button">Login</button></a>
-<a href="{% url 'accounts:registration' %}"><button type="button" name="button">Register</button></a>
+<div class="ripple-background">
+  <div class="">
+
+  </div>
+  <div class="circle xxlarge shade1">
+
+  </div>
+  <div class="circle xlarge shade2">
+
+  </div>
+  <div class="circle large shade3">
+
+  </div>
+  <div class="circle mediun shade4">
+
+  </div>
+</div>
+<div class="container">
+  <div class="row">
+    <div class="col-6">
+
+    </div>
+    <div class="col-6">
+      <h1 class="text-white mx-3 mt-5">NOTICE BOARD</h1>
+      <p class="text-light m-3 w-75">Team Randumb meets you with a powerful notification and timeline management tool to keep you on track and also helps you better to get your questionnaire answered from your admin</p>
+      <a href="{% url 'accounts:login' %}"><button type="button" class="m-3 btn btn-light btn-lg" name="button">Login</button></a>
+      <a href="{% url 'accounts:registration' %}"><button type="button" class="m-3 btn btn-light btn-lg" name="button">Register</button></a>
+    </div>
+  </div>
+</div>
+
 {% endif %}
 {% endblock %}

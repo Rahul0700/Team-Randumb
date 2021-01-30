@@ -1,30 +1,58 @@
 {% extends "base.html" %}
 {% block content %}
-{% if group.admin == user.username %}
-You are the admin of the group
-<br>
-Share this link for your members to join
-<br>
-<span class="text-primary">http://{{ current_site.domain }}{% url 'accounts:join' slug=group.slug %}</span>
-{% if group.members.all %}
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">Username </th>
-      <th scope="col">Email</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for user in group.members.all %}
-    <tr>
-      <td scope="row">{{ user.username }}</td>
-      <td>{{ user.email }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% endif %}
-{% elif user in group.members.all %}
-<a href="{% url 'accounts:leave' slug=group.slug %}"><button type="button" name="button">Leave Group</button></a>
-{% endif %}
+<div class="container">
+  {% if group.admin == user.username %}
+  <h2 class="text-white my-5">{{group.name}}</h2>
+
+  <div class="my-3">
+    You are the admin of the group
+    <br>
+    Share this link for your members to join
+    <br>
+    <span class="text-light text-decoration-underline">http://{{ current_site.domain }}{% url 'accounts:join' slug=group.slug %}</span>
+  </div>
+
+  {% if group.members.all %}
+  <h5 class="text-white">Members</h5>
+  <table class="table w-75">
+    <thead>
+      <tr>
+        <th scope="col">Username </th>
+        <th scope="col">Email</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in group.members.all %}
+      <tr>
+        <td scope="row">{{ user.username }}</td>
+        <td>{{ user.email }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+  {% elif user in group.members.all %}
+  <h2 class="text-white my-5">{{group.name}}</h2>
+  {% if group.members.all %}
+  <h5 class="text-white">Members</h5>
+  <table class="table w-75">
+    <thead>
+      <tr>
+        <th scope="col">Username </th>
+        <th scope="col">Email</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in group.members.all %}
+      <tr>
+        <td scope="row">{{ user.username }}</td>
+        <td>{{ user.email }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+  <a href="{% url 'accounts:leave' slug=group.slug %}"><button type="button" name="button">Leave Group</button></a>
+  {% endif %}
+</div>
 {% endblock %}
