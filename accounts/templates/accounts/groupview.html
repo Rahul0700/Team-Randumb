@@ -6,7 +6,12 @@ You are the admin of the group
 Share this link for your members to join
 <br>
 http://{{ current_site.domain }}{% url 'accounts:join' slug=group.slug %}
+{% if group.members.all %}
 <table>
+  <tr>
+    <th>Username </th>
+    <th>Email</th>
+  </tr>
   {% for user in group.members.all %}
   <tr>
     <td>{{ user.username }}</td>
@@ -14,6 +19,7 @@ http://{{ current_site.domain }}{% url 'accounts:join' slug=group.slug %}
   </tr>
   {% endfor %}
 </table>
+{% endif %}
 {% elif user in group.members.all %}
 <a href="{% url 'accounts:leave' slug=group.slug %}"><button type="button" name="button">Leave Group</button></a>
 {% endif %}
