@@ -5,6 +5,15 @@ from django.contrib.auth.decorators import login_required
 from .forms import eventForm,questionForm
 from django.urls import reverse
 from django.http import HttpResponseRedirect
+
+from .groupping import checkSemantics,load_pretrained,get_embeddings,formatOutput
+
+import numpy as np
+import tensorflow as tf
+global graph,model
+from tensorflow.python.framework.ops import disable_eager_execution
+
+
 # Create your views here.
 def Home(request):
     member_groups = []
@@ -40,6 +49,13 @@ def EventUpdateform(request,id):
         form = eventForm(instance=event)
     return render(request,'accounts/form.html',{'form':form})
 
+print("Keras model loading.......")
+embed = get_embeddings()
+model = load_pretrained(embed)
+# embeddings = embeddings()
+print("Model loaded!!")
+
+
 @login_required
 def Eventview(request,id):
     event = Event.objects.get(id=id)
@@ -50,7 +66,22 @@ def Eventview(request,id):
     if request.method == 'POST':
         form = questionForm(data=request.POST)
         if form.is_valid():
-            faq = form.save(commit=False)
+            res = []
+            faq = form.save(commit = False)
+            question = form.cleaned_data['question']
+            print("***************************")
+            print(question)
+            print("**************************************")
+            for i in faqs:
+                result, op_len= checkSemantics(question, i.question)
+                print(result)
+                tf.executing_eagerly()
+                prediction = model.predict(result)
+                prediction = formatOutput(prediction,op_len)
+                print(prediction)
+                if prediction == True:
+                    res.append(i)
+            print(res)
             faq.event = event
             faq.user = request.user
             faq.save()
@@ -58,6 +89,10 @@ def Eventview(request,id):
     else:
         form = questionForm()
     return render(request, "general/eventview.html",{'event':event,'faqs':faqs,'form':form})
+
+
+
+
 
 @login_required
 def Eventdelete(request,id):
@@ -77,14 +112,14 @@ def AnswerFaq(request,id):
     return render(request, "general/answerfaq.html",{'faq':faq})
 
 
-#Assuming data is present
 print("Keras model loading.......")
 embed = get_embeddings()
 model = load_pretrained(embed)
 # embeddings = embeddings()
 print("Model loaded!!")
 
-def predict(request):
+def predict(request,id):
+    faq = FAQ.objects.get(id=id)
     if request.method == "POST":
         form = take_question(data = request.POST)
         if form.is_valid():
@@ -92,7 +127,7 @@ def predict(request):
             print("***************************")
             print(question)
             print("**************************************")
-            from_database = QuestionResponse.objects.values('question')
+            from_database = FAQ.objects.values('question')
             for i in from_database:
                 result = checkSemantics(question, i, model)
                 tf.executing_eagerly()

@@ -8,5 +8,5 @@ urlpatterns = [
     path('<id>/updateevent/',views.EventUpdateform,name='updateevent'),
     path('<id>/removeevent/',views.Eventdelete,name='removeevent'),
     path('question/<id>/',views.AnswerFaq,name='answerfaq'),
-    path("model",views.predict,name="model_predict"),
-]
+    path("predict/<id>/",views.predict,name="askquestion"),
+    ]

@@ -155,6 +155,16 @@ def checkSemantics(question1, question2):
     res =[]
     questions.append(question1)
     questions.append(question2)
+    op_len =  max([len(i.split(' ')) for i in questions])
+    print(op_len)
     res = inference(questions)
+    print(res)
     result = pad_questions(res)
-    return result
+    return result,op_len
+
+def formatOutput(prediction,op_len):
+    final_score = np.sum(prediction[-op_len:]) / op_len
+    isSimilar = False
+    if(final_score > 0.4):
+        isSimilar = True
+    return isSimilar
