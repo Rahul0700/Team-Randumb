@@ -136,8 +136,10 @@ def create_model(embeddings):
     # Calculates the distance as defined by the MaLSTM model
     malstm_distance = Lambda(function=lambda x: exponent_neg_manhattan_distance(x[0], x[1]),output_shape=lambda x: (x[0][0], 1))([left_output, right_output])
 
+    optimizer = Adadelta(clipnorm=gradient_clipping_norm)
     # Pack it all up into a model
     malstm = Model([left_input, right_input], [malstm_distance])
+    malstm.compile(loss='mean_squared_error', optimizer=optimizer, metrics=['accuracy'], run_eagerly = True)
 
     return malstm
 
@@ -147,29 +149,12 @@ def load_pretrained(embeddings):
   return model
 
 
-# def load_structure():
-#   with open('/content/gdrive/My Drive/Siamese LSTM/vocab.json') as f:
-#       vocabulary = json.load(f)
-#   embeddings = np.load('/content/gdrive/My Drive/Siamese LSTM/data.npy')
-#   model = load_pretrained()
-#
-#   return vocabulary, embeddings, model
 
-def checkSemantics(question1, question2, model):
+def checkSemantics(question1, question2):
     questions = []
     res =[]
     questions.append(question1)
     questions.append(question2)
     res = inference(questions)
     result = pad_questions(res)
-    #Added this line
-    pred = tf.function(model.predict)
-    vals =  pred([result[0],result[1]])
-    #####
-    vals =  model.predict([result[0],result[1]])
-    op_len = max(len(questions[0]), len(questions[1]))
-    final_score = np.sum(vals[-op_len:]) / op_len
-    isSimilar = False
-    if(final_score > 0.4):
-        isSimilar = True
-    return isSimilar
+    return result
