@@ -82,6 +82,7 @@ def Eventview(request,id):
                 if prediction == True:
                     res.append(i)
             print(res)
+            faq.frequency += 1
             faq.event = event
             faq.user = request.user
             faq.save()
