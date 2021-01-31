@@ -27,7 +27,6 @@ def Home(request):
 
 
 #Assuming data is present
-graph = tf.compat.v1.get_default_graph()
 print("Keras model loading.......")
 embed = get_embeddings()
 model = load_pretrained(embed)
@@ -44,11 +43,10 @@ def predict(request):
             print("**************************************")
             from_database = QuestionResponse.objects.values('question')
             for i in from_database:
-                with graph.as_default():
-                    prediction = checkSemantics(question, i, model)
-                    print(prediction)
-                    if prediction == True:
-                        res.append(i)
+                prediction = checkSemantics(question, i, model)
+                print(prediction)
+                if prediction == True:
+                    res.append(i)
             print(res)
     else:
         form = take_question()
