@@ -43,7 +43,9 @@ def predict(request):
             print("**************************************")
             from_database = QuestionResponse.objects.values('question')
             for i in from_database:
-                prediction = checkSemantics(question, i, model)
+                result = checkSemantics(question, i, model)
+                tf.executing_eagerly()
+                prediction = model.predict(result)
                 print(prediction)
                 if prediction == True:
                     res.append(i)
