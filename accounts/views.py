@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .forms import UserCreateForm,CreatGroupForm
 from .models import Group,GroupMember
+from general.models import Event
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
@@ -38,8 +39,11 @@ def CreateGroup(request):
 @login_required
 def Groupview(request,slug):
     group = Group.objects.get(slug=slug)
+    events = Event.objects.filter(group=group)
     current_site = get_current_site(request)
-    return render(request, "accounts/groupview.html",{'group':group,'current_site':current_site})
+    return render(request, "accounts/groupview.html",{'group':group,
+                                                      'current_site':current_site,
+                                                      'events':events})
 
 class JoinGroup(LoginRequiredMixin,RedirectView):
 
