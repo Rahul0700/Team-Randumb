@@ -10,3 +10,9 @@ class questionForm(ModelForm):
     class Meta:
         fields = ('question',)
         model = FAQ
+
+class take_question(ModelForm):
+    class Meta:
+        field = ("question")
+        exclude = ("is_response","response","frequency")
+        model = QuestionResponse
