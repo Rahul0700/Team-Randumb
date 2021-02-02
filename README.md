@@ -1,4 +1,3 @@
-# Team-Randumb
 # Team-Randumb : Don't Ignore Me
 The problem Don't Ignore Me solves
 Our main motivation to build this project was to solve the problem of getting ignored by teachers/instructors. Teachers often tend to ignore redundant queries as managing a team, assignments and tons of queries is quite difficult. So as a result, this has created a channel of inefficient communication. Back to the days where classes were held offline, we had bulletin/notice boards which would contain all the useful information and one could easily refer it. But now when the operations are online, there no one stop place where you can get information about notices, assignments and answers to your queries. Even Google Classroom has a limitation to that. Student’s redundant queries get ignores and notices are usually sent via mail.
